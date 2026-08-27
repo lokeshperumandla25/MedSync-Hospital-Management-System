@@ -21,7 +21,7 @@ public class GatewayConfig {
 	                
 	                .route("bed-service", r -> r
 	                        .path("/bed/**")
-	                        .uri("lb://BEDSERVICET"))
+	                        .uri("lb://BEDSERVICE"))
 	                
 	                .route("room-service", r -> r
 	                        .path("/rooms/**")
@@ -37,7 +37,7 @@ public class GatewayConfig {
 	                
 	                .route("notification-service", r -> r
 	                        .path("/api/notifications/**")
-	                        .uri("lb://NOTIFICATION-SERVICE"))
+	                        .uri("lb://NOTIFICATIONSERVICE"))
 	                
 	                .build();
 				
