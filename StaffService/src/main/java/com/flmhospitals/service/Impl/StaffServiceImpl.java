@@ -1,6 +1,7 @@
 package com.flmhospitals.service.Impl;
 
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,7 @@ import com.flmhospitals.exception.InvalidOtpException;
 import com.flmhospitals.exception.StaffNotFoundException;
 import com.flmhospitals.model.Staff;
 import com.flmhospitals.model.StaffDetails;
+import com.flmhospitals.security.JwtService;
 import com.flmhospitals.service.StaffService;
 
 import jakarta.transaction.Transactional;
@@ -43,12 +45,14 @@ public class StaffServiceImpl implements StaffService {
 	private final StaffRepository staffRepository;
 	private final StaffDetailsRepository detailsRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final JwtService jwtService; 
 	
-	public StaffServiceImpl(StaffRepository staffRepository, NotificationFeignClient notificationFeignClient, StaffDetailsRepository detailsRepository, PasswordEncoder passwordEncoder, GlobalExceptionHandler globalExceptionHandler) {
+	public StaffServiceImpl(StaffRepository staffRepository, NotificationFeignClient notificationFeignClient, StaffDetailsRepository detailsRepository, PasswordEncoder passwordEncoder, GlobalExceptionHandler globalExceptionHandler, JwtService jwtService) {
 		this.staffRepository = staffRepository;
 		this.notificationFeignClient = notificationFeignClient;
 		this.detailsRepository = detailsRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.jwtService = jwtService;
 	}
 
 	@Override
@@ -119,13 +123,57 @@ public class StaffServiceImpl implements StaffService {
 
 	@Override
 	public LoginResponse login(LoginRequest request) {
-		
-		return null;
-	}
+		 String normalizedEmail = request.getEmail().trim().toLowerCase();
+
+		    StaffDetails staffDetails = detailsRepository.findByEmail(normalizedEmail)
+		            .orElseThrow(() -> new ResponseStatusException(
+		                    HttpStatus.UNAUTHORIZED,
+		                    "Invalid email or password"
+		            ));
+
+		    // Use BCrypt to compare passwords
+		    if (!passwordEncoder.matches(request.getPassword(), staffDetails.getPassword())) {
+		        throw new ResponseStatusException(
+		                HttpStatus.UNAUTHORIZED,
+		                "Invalid email or password"
+		        );
+		    }
+
+
+		    Staff staff = staffRepository.findByEmail(normalizedEmail)
+		            .orElseThrow(() -> new ResponseStatusException(
+		                    HttpStatus.UNAUTHORIZED,
+		                    "Invalid email or password"
+		            ));
+
+		    if (!staff.isEmployeeActive() || !staff.isCanLogin()) {
+		        throw new ResponseStatusException(
+		                HttpStatus.FORBIDDEN,
+		                "Staff is not allowed to login"
+		        );
+		    }
+
+		    String roleUpperCase = staff.getRole() != null ? staff.getRole().toUpperCase() : "USER";
+		    
+		    System.out.println("Login - Staff ID: " + staff.getStaffId());
+		    System.out.println("Login - Original Role: " + staff.getRole());
+		    System.out.println("Login - Role for Token: " + roleUpperCase);
+		    
+		    String token = jwtService.generateToken(staff.getStaffId(), roleUpperCase);
+		    
+		    // Check if password reset is required
+		    boolean requirePasswordReset = staffDetails.isRequirePasswordReset();
+
+		    return new LoginResponse(token, 3600000L, staff.getRole(), staff.getStaffId(), requirePasswordReset);
+		}
+	
 
 	@Override
 	public List<StaffDetailsDto> getAllStaff() {		
-		return null;
+		List<StaffDetailsDto> staffDetailsList = staffRepository.findByIsEmployeeActiveTrue().stream()
+				.map(staff -> StaffDtoBuilder.buildStaffDetailsDto(staff))
+				.toList();
+		return staffDetailsList;
 	}
 
 	@Override

@@ -39,7 +39,7 @@ public class BedAssignmentController {
 		return ResponseEntity.ok(response);
 	}
 	
-	@PutMapping("/vacate-bed/{roomNumber/{bedNumber}}")
+	@PutMapping("/vacate-bed/{roomNumber}/{bedNumber}")
 	public ResponseEntity<BedDetailsResponseDTO> vacateBed( @PathVariable("roomNumber") long roomNumber,@PathVariable("bedNumber") long bedNumber){
 		
 		Bed vacatedBed = bedAssignment.vacateBed(roomNumber,bedNumber);
