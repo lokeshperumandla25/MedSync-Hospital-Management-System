@@ -369,8 +369,6 @@ This repository is currently a development-oriented project. Before deploying it
 
 - Add Docker and Docker Compose for simplified deployment
 - Add Swagger/OpenAPI documentation
-- Add Resilience4j for fault tolerance
-- Add integration tests for service-to-service communication
 - Implement CI/CD with GitHub Actions
 - Deploy the application to AWS
 
