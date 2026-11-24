@@ -34,7 +34,7 @@ public class StaffBuilder {
 			.role(registerStaffDto.getRole())
 			.canLogin(true)
 			.isEmployeeActive(true)
-			.staffAddress(buildStaffAddressFromStaffAddressDto(registerStaffDto.getStaffAddrssDto()))
+			.staffAddress(buildStaffAddressFromStaffAddressDto(registerStaffDto.getStaffAddressDto()))
 			.staffDetails(buildStaffDetailsFromStaffDetailsDto(registerStaffDto.getEmail()))
 			.build();
 		
@@ -93,7 +93,7 @@ public class StaffBuilder {
 	    details.setEmail(dto.getEmail());
 	    
 	    StaffAddress address = existingStaff.getStaffAddress();
-	    StaffAddressDto addressDto = dto.getStaffAddrssDto();
+	    StaffAddressDto addressDto = dto.getStaffAddressDto();
 	    
 	    address.setLandmark(addressDto.getLandmark());
 	    address.setCity(addressDto.getCity());

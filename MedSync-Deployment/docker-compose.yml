@@ -1,0 +1,118 @@
+services:
+
+  eureka-server:
+    build:
+      context: ../EurekaServer
+    container_name: medsync-eureka
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8761:8761"
+    networks:
+      - medsync-network
+
+  appointment-service:
+    build:
+      context: ../AppointmentService
+    container_name: medsync-appointment
+    restart: unless-stopped
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - eureka-server
+    networks:
+      - medsync-network
+
+  bed-service:
+    build:
+      context: ../BedService
+    container_name: medsync-bed
+    restart: unless-stopped
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - eureka-server
+    networks:
+      - medsync-network
+
+  patient-service:
+    build:
+      context: ../PatientService
+    container_name: medsync-patient
+    restart: unless-stopped
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - eureka-server
+    networks:
+      - medsync-network
+
+  staff-service:
+    build:
+      context: ../StaffService
+    container_name: medsync-staff
+    restart: unless-stopped
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      - eureka-server
+    networks:
+      - medsync-network
+
+  notification-service:
+    build:
+      context: ../NotificationService
+    container_name: medsync-notification
+    restart: unless-stopped
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL}
+      SENDGRID_FROM_NAME: ${SENDGRID_FROM_NAME}
+    depends_on:
+      - eureka-server
+    networks:
+      - medsync-network
+
+  gateway-service:
+    build:
+      context: ../GatewayService
+    container_name: medsync-gateway
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      - eureka-server
+    networks:
+      - medsync-network
+
+  frontend:
+    build:
+     context: "C:/Users/mohan/Downloads/Medsync-UI-feature-medsyncinitialcode/Medsync-UI-feature-medsyncinitialcode"
+    container_name: medsync-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - gateway-service
+    networks:
+      - medsync-network
+
+networks:
+  medsync-network:
+    driver: bridge

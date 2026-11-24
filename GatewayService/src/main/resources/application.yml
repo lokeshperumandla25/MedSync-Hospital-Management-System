@@ -5,17 +5,17 @@ spring:
         webflux:
           routes:
             - id: AppointmentManagement
-              uri: lb://APPOINTMENTMANAGEMENT
+              uri: lb://APPOINTMENTSERVICE
               predicates:
                 - Path=/appointments/**
 
             - id: BedManagement
-              uri: lb://BEDMANAGEMENT
+              uri: lb://BEDSERVICE
               predicates:
                 - Path=/bed/**,/rooms/**
 
             - id: PatientManagement
-              uri: lb://PATIENTMANAGEMENT
+              uri: lb://PATIENTSERVICE
               predicates:
                 - Path=/patients/**
 

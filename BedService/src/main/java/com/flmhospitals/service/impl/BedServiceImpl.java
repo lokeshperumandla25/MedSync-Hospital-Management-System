@@ -2,6 +2,7 @@ package com.flmhospitals.service.impl;
 
 import java.util.List;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,7 @@ public class BedServiceImpl implements BedService {
 			BedResponseDtoBuilder.buildBedDetailsResponseDtoFromBed(save);
 			return ResponseEntity.status(HttpStatus.CREATED).body("Successfully added Bed Number "+ bedRequestDTO.getBedNumber() + " into Room Number " + bedRequestDTO.getRoomNumber());
 		}
-		throw new IllegalStateException("Cannot add Bed into Room Number "+ bedRequestDTO.getRoomNumber()+ " as the room is full");
+		throw new RoomNotFoundException("Cannot add Bed into Room Number "+ bedRequestDTO.getRoomNumber()+ " as the room is full");
 		
 	}
 
@@ -120,7 +121,7 @@ public class BedServiceImpl implements BedService {
 						.orElseThrow(() -> new BedNotFoundException("Bed Not Found with BedNumber :"+bedNumber +" in RoomNumber: "+roomNumber ));
 		
 		
-		existingBed.setOccupied(bedRequestDTO.isOccpied());
+		existingBed.setOccupied(bedRequestDTO.isOccupied());
 		existingBed.setRoom(existingRoom);
 		
 		Bed savedBed = bedRepository.save(existingBed);

@@ -1,3 +1,4 @@
+
 package com.flmhospitals.controller;
 
 import java.time.LocalDate;
@@ -19,31 +20,51 @@ import com.flmhospitals.service.DoctorScheduleService;
 @RequestMapping("/doctorSchedule")
 public class DoctorScheduleController {
 
-	private final DoctorScheduleService doctorScheduleService;
-	
-	public DoctorScheduleController(DoctorScheduleService doctorScheduleService) {
-		this.doctorScheduleService = doctorScheduleService;
-	}
-	
-	@PostMapping("/markavailable")
-	public ResponseEntity<String> markDoctorAvailable(@RequestParam("staffId") String staffId, @RequestBody List<LocalDate> dates){
-		return doctorScheduleService.markDoctorAvailable(staffId,dates);
-		
-	}
-	
-	@GetMapping("/isDoctorAvailable")
-	public ResponseEntity<Boolean> isDoctorAvailable(@RequestParam("staffId") String staffId,@RequestParam("date") String date){
-		
-		LocalDate localDate = LocalDate.parse(date);
-		return ResponseEntity.ok(doctorScheduleService.isDoctorAvailable(staffId,localDate));
-	}
-	
-	public ResponseEntity<List<LocalDate>> markDoctorUnavailable(@PathVariable("doctorId") String doctorId,@RequestBody List<LocalDate> listOfUnavailableDates){
-		
-		List<LocalDate> doctorScheduleResponse = doctorScheduleService.markDoctorUnavailable(doctorId, listOfUnavailableDates);
-		
-		return ResponseEntity.status(HttpStatus.CREATED).body(doctorScheduleResponse);
-	}
-	
-	
+    private final DoctorScheduleService doctorScheduleService;
+
+    public DoctorScheduleController(DoctorScheduleService doctorScheduleService) {
+        this.doctorScheduleService = doctorScheduleService;
+    }
+
+    @PostMapping("/markavailable")
+    public ResponseEntity<String> markDoctorAvailable(
+            @RequestParam("staffId") String staffId,
+            @RequestBody List<LocalDate> dates) {
+
+        return doctorScheduleService.markDoctorAvailable(staffId, dates);
+    }
+
+    @GetMapping("/isDoctorAvailable")
+    public ResponseEntity<Boolean> isDoctorAvailable(
+            @RequestParam("staffId") String staffId,
+            @RequestParam("date") String date) {
+
+        LocalDate localDate = LocalDate.parse(date);
+
+        return ResponseEntity.ok(
+                doctorScheduleService.isDoctorAvailable(staffId, localDate));
+    }
+
+    @PostMapping("/{doctorId}/unavailable")
+    public ResponseEntity<List<LocalDate>> markDoctorUnavailable(
+            @PathVariable("doctorId") String doctorId,
+            @RequestBody List<LocalDate> listOfUnavailableDates) {
+
+        List<LocalDate> doctorScheduleResponse =
+                doctorScheduleService.markDoctorUnavailable(
+                        doctorId, listOfUnavailableDates);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(doctorScheduleResponse);
+    }
+
+    @GetMapping("/{staffId}/unavailable-dates")
+    public ResponseEntity<List<LocalDate>> getDoctorUnavailableDates(
+            @PathVariable("staffId") String staffId) {
+
+        List<LocalDate> unavailableDates =
+                doctorScheduleService.getDoctorUnavailableDates(staffId);
+
+        return ResponseEntity.ok(unavailableDates);
+    }
 }

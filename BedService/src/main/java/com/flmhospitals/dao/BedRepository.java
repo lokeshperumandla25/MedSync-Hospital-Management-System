@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.flmhospitals.model.Bed;
 
-import feign.Param;
+import org.springframework.data.repository.query.Param;
 
 @Repository
 public interface BedRepository extends JpaRepository<Bed, Long>{

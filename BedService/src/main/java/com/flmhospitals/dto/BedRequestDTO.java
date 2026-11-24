@@ -1,5 +1,7 @@
 package com.flmhospitals.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,7 @@ public class BedRequestDTO {
 	
 	private long roomNumber;
 	
-	private boolean isOccpied;
+	@JsonProperty("occupied")
+	private boolean isOccupied;
 
 }

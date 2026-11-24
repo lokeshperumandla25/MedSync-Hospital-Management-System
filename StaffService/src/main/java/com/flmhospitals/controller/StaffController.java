@@ -3,6 +3,7 @@ package com.flmhospitals.controller;
 
 import java.util.List;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +26,7 @@ import com.flmhospitals.dto.StaffDetailsDto;
 import com.flmhospitals.dto.VerifyOtpRequest;
 import com.flmhospitals.model.Staff;
 import com.flmhospitals.service.StaffService;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
 @RequestMapping("/staff")
@@ -74,10 +76,13 @@ public class StaffController {
 		return ResponseEntity.ok(updatedStaff);
 	}
 	
-	public ResponseEntity<String> deleteStaff(@PathVariable(name="staffId") String staffId){
-		String deleteStaff = staffService.deleteStaff(staffId);
-		
-		return ResponseEntity.status(HttpStatus.OK).body(deleteStaff);
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@DeleteMapping("/resign/{staffId}")
+	public ResponseEntity<String> deleteStaff(
+	        @PathVariable(name = "staffId") String staffId) {
+
+	    String deleteStaff = staffService.deleteStaff(staffId);
+	    return ResponseEntity.status(HttpStatus.OK).body(deleteStaff);
 	}
 	
 	@PostMapping("/forgot-password")

@@ -2,6 +2,7 @@ package com.flmhospitals.service.Impl;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,11 +89,84 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService{
 	}
 
 	@Override
-	public List<LocalDate> markDoctorUnavailable(String doctorId, List<LocalDate> listOfUnavailableDates) {
+	public List<LocalDate> markDoctorUnavailable(
+	        String doctorId,
+	        List<LocalDate> listOfUnavailableDates) {
 
-		
-		
-		return null;
+	    if (listOfUnavailableDates == null || listOfUnavailableDates.isEmpty()) {
+	        throw new IllegalArgumentException("Please provide at least one date");
+	    }
+
+	    Staff staff = staffRepository.findById(doctorId)
+	            .orElseThrow(() ->
+	                new StaffNotFoundException("No Staff with ID " + doctorId));
+
+	    if (staff.getStaffType() != StaffType.DOCTOR) {
+	        throw new IllegalArgumentException(
+	                "Staff with ID " + doctorId + " is not a doctor");
+	    }
+
+	    LocalDate today = LocalDate.now();
+
+	    List<LocalDate> invalidDates = new ArrayList<>();
+
+	    for (LocalDate date : listOfUnavailableDates) {
+	        if (date == null || date.isBefore(today)) {
+	            invalidDates.add(date);
+	        }
+	    }
+
+	    if (!invalidDates.isEmpty()) {
+	        throw new IllegalArgumentException(
+	                "Cannot mark past or null dates as unavailable: " + invalidDates);
+	    }
+
+	    List<LocalDate> savedDates = new ArrayList<>();
+
+	    for (LocalDate date : listOfUnavailableDates) {
+
+	        boolean alreadyUnavailable =
+	                doctorScheduleRepository
+	                    .existsByStaff_StaffIdAndUnavailableDate(doctorId, date);
+
+	        if (!alreadyUnavailable) {
+
+	            DoctorSchedule schedule = new DoctorSchedule();
+
+	            schedule.setStaff(staff);
+	            schedule.setUnavailableDate(date);
+
+	            doctorScheduleRepository.save(schedule);
+
+	            savedDates.add(date);
+	        }
+	    }
+
+	    return savedDates;
 	}
 
+	@Override
+	public List<LocalDate> getDoctorUnavailableDates(String doctorId) {
+
+	    Staff staff = staffRepository.findById(doctorId)
+	            .orElseThrow(() ->
+	                new StaffNotFoundException("No Staff with ID " + doctorId));
+
+	    if (staff.getStaffType() != StaffType.DOCTOR) {
+	        throw new IllegalArgumentException(
+	                "Staff with ID " + doctorId + " is not a doctor");
+	    }
+
+	    List<DoctorSchedule> schedules =
+	            doctorScheduleRepository.findAllByStaff_StaffId(doctorId);
+
+	    List<LocalDate> unavailableDates = new ArrayList<>();
+
+	    for (DoctorSchedule schedule : schedules) {
+	        unavailableDates.add(schedule.getUnavailableDate());
+	    }
+	    unavailableDates.sort(Comparator.naturalOrder());
+
+	    return unavailableDates;
+	}
 }

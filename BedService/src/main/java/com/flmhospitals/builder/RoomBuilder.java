@@ -28,7 +28,7 @@ public class RoomBuilder {
 		for(BedRequestDTO beds : bedRequestDTO ) {
 			Bed bed = new Bed();
 			bed.setBedNumber(beds.getBedNumber());
-			bed.setOccupied(beds.isOccpied());
+			bed.setOccupied(beds.isOccupied());
 			bedList.add(bed);
 		}
 	}

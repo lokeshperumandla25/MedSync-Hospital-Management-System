@@ -7,10 +7,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-	
-	@ExceptionHandler(RoomNotFoundException.class)
-	public ResponseEntity<String> handleRoomNotFoundException(RoomNotFoundException exception){
-		return new ResponseEntity<String>(exception.getMessage(),HttpStatus.NOT_FOUND);
-	}
 
+    @ExceptionHandler(RoomNotFoundException.class)
+    public ResponseEntity<String> handleRoomNotFoundException(RoomNotFoundException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RoomFullException.class)
+    public ResponseEntity<String> handleRoomFullException(RoomFullException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+    }
 }

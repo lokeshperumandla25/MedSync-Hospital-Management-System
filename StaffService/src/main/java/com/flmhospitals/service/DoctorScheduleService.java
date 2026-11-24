@@ -13,4 +13,5 @@ public interface DoctorScheduleService {
 
 	List<LocalDate> markDoctorUnavailable(String doctorId, List<LocalDate> listOfUnavailableDates);
 
+	List<LocalDate> getDoctorUnavailableDates(String doctorId);
 }

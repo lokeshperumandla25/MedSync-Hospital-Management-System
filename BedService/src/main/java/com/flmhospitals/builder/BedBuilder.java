@@ -9,7 +9,7 @@ public class BedBuilder {
 
 		return Bed.builder()
 				.bedNumber(dto.getBedNumber())
-				.isOccupied(dto.isOccpied())
+				.isOccupied(dto.isOccupied())
 				.build();
 		
 	}

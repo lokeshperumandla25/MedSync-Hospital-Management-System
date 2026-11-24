@@ -30,7 +30,7 @@ public class RegisterStaffDto {
 	
 	private String email;
 	
-	private StaffAddressDto staffAddrssDto;
+	private StaffAddressDto staffAddressDto;
 	
 	private Specialization specialization;
 	

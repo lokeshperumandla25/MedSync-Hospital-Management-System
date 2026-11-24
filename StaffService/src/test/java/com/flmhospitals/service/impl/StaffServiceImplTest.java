@@ -471,7 +471,7 @@ class StaffServiceImplTest {
                 "Lokesh", "Perumandla", "9876543210",
                 "ADMIN", "Male", LocalDate.of(2025, 1, 10),
                 2, "other@gmail.com",
-                registerRequest.getStaffAddrssDto(),
+                registerRequest.getStaffAddressDto(),
                 Specialization.GENERAL_PHYSICIAN,
                 StaffType.DOCTOR
         );
@@ -497,7 +497,7 @@ class StaffServiceImplTest {
                 "Lokesh", "Perumandla", "9123456780",
                 "ADMIN", "Male", LocalDate.of(2025, 1, 10),
                 2, "lokesh@gmail.com",
-                registerRequest.getStaffAddrssDto(),
+                registerRequest.getStaffAddressDto(),
                 Specialization.GENERAL_PHYSICIAN,
                 StaffType.DOCTOR
         );
