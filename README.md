@@ -367,8 +367,6 @@ This repository is currently a development-oriented project. Before deploying it
 
 ## Future Improvements
 
-- Add Docker and Docker Compose for simplified deployment
-- Add Swagger/OpenAPI documentation
 - Implement CI/CD with GitHub Actions
 - Deploy the application to AWS
 
